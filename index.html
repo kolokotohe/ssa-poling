@@ -1,78 +1,67 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SSA Live Polling</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Live Polling SSA 2025</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
     body { font-family: 'Inter', sans-serif; }
-    .glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
-    .pulse-animation { animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
-    .floating-vote {
+    .glow { box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.75; }
+    }
+    .floating {
       position: absolute;
-      font-size: 1.8rem;
+      font-size: 2rem;
       opacity: 0.7;
       pointer-events: none;
-      z-index: 1;
+      animation: floatAnim 6s ease-in-out infinite;
     }
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-    .float-anim { animation: float 4s ease-in-out infinite; }
+    @keyframes floatAnim {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-25px); }
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
 
-  <!-- Emoji Mengambang -->
-  <div class="floating-vote float-anim" style="top: 15%; left: 10%;">🗳️</div>
-  <div class="floating-vote float-anim" style="top: 25%; right: 10%;">✅</div>
-  <div class="floating-vote float-anim" style="top: 75%; left: 15%;">⭐</div>
-  <div class="floating-vote float-anim" style="top: 60%; right: 15%;">📊</div>
+  <!-- Floating Emojis -->
+  <div class="floating" style="top:15%; left:10%;">🗳️</div>
+  <div class="floating" style="top:25%; right:10%;">✅</div>
+  <div class="floating" style="top:75%; left:15%;">⭐</div>
+  <div class="floating" style="top:60%; right:15%;">📊</div>
 
-  <div class="max-w-xs w-full text-center relative z-10 px-3">
-    <!-- Header -->
-    <div class="mb-4">
-      <h1 class="text-xl font-bold text-white mb-1 pulse-animation">
-        📊 Live Polling SSA 2025
-      </h1>
-      <p class="text-sm text-blue-200">
-        Data jumlah pemilih terkini
-      </p>
+  <div class="relative z-10 p-4 max-w-sm w-full text-center">
+    <h1 class="text-2xl font-bold text-white mb-2 pulse">📊 Live Polling SSA 2025</h1>
+    <p class="text-sm text-blue-200 mb-4">Data jumlah pemilih terkini</p>
+    <div class="bg-white/20 backdrop-blur-lg rounded-lg p-6 glow border border-white/30 mb-4">
+      <p class="text-sm text-blue-100 mb-1">Total Pemilih</p>
+      <div id="totalVote" class="text-6xl font-extrabold text-white">0</div>
+      <p class="mt-2 text-xs text-blue-200">Update otomatis setiap 5 detik</p>
     </div>
-
-    <!-- Box Data -->
-    <div class="bg-white/10 backdrop-blur-lg rounded-lg p-4 glow border border-white/20 mb-3">
-      <p class="text-sm text-blue-200 mb-1">Total Pemilih</p>
-      <div id="totalVote" class="text-5xl font-extrabold text-white">0</div>
-      <div class="mt-2 text-xs text-blue-300">Update otomatis setiap 5 detik</div>
-    </div>
-
-    <!-- Tombol Aksi -->
-    <div class="bg-white/5 backdrop-blur-sm rounded-lg p-2 border border-white/10">
-      <p class="text-xs text-blue-200 mb-2">Gunakan hak pilihmu sekarang</p>
-      <a href="https://docs.google.com/forms/d/1vQD42m03tz5Fdy5dXzUNjyWqHbf1JSYd7bcJxj5AcTs/viewform" target="_blank"
-         class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 shadow-lg text-sm block">
-        🗳️ Vote Sekarang
-      </a>
-    </div>
+    <a href="https://docs.google.com/forms/d/1vQD42m03tz5Fdy5dXzUNjyWqHbf1JSYd7bcJxj5AcTs/viewform" target="_blank"
+       class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition duration-200">
+      🗳️ Vote Sekarang
+    </a>
   </div>
 
   <script>
-    const API_URL = https://script.google.com/macros/s/AKfycbxWP2uZiwPByQi819zOMqQ_I3WUyyzPtJDgWLnGm9s-togU2b6E1VZ_aTXBzMx64UJ0/exec; // Ganti ini dengan URL /exec Apps Script
-
+    const API_URL = "https://script.google.com/macros/s/AKfycbzWk6TiwVl17V6tprHHgVo54_42w1zkZBZXCLgi7YWpDTPXM1JHa4KaEmAMZeNsAa6T/exec";
     async function fetchVotes() {
       try {
         const res = await fetch(API_URL);
         const data = await res.json();
-        document.getElementById("totalVote").textContent = data.totalVotes || 0;
-      } catch (error) {
-        console.error("Gagal memuat data:", error);
+        document.getElementById('totalVote').textContent = data.totalPemilih || 0;
+      } catch (e) {
+        console.error('Fetch error:', e);
       }
     }
-
     fetchVotes();
-    setInterval(fetchVotes, 5000); // refresh tiap 5 detik
+    setInterval(fetchVotes, 5000);
   </script>
 </body>
 </html>
